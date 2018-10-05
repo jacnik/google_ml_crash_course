@@ -124,6 +124,37 @@ calibration_data["targets"] = pd.Series(targets)
 print()
 print(calibration_data.describe())
 
-
 # get a uniform random sample of the data so we can make a readable scatter plot.
 sample = california_housing_dataframe.sample(300)
+
+x_0 = sample['total_rooms'].min()
+x_1 = sample['total_rooms'].max()
+
+# Retrieve the final weight and bias generated during training.
+weight = linear_regressor.get_variable_value('linear/linear_model/total_rooms/weights')[0]
+bias = linear_regressor.get_variable_value('linear/linear_model/bias_weights')
+
+# Get the predicted median_house_values for the min and max total_rooms values.
+y_0 = weight * x_0 + bias
+y_1 = weight * x_1 + bias
+
+# Plot our regression line from (x_0, y_0) to (x_1, y_1).
+plt.plot([x_0, x_1], [y_0, y_1], c='r')
+
+# Label the graph axes.
+plt.ylabel('median_house_value')
+plt.xlabel('total_rooms')
+
+# Plot a scatter plot from our data sample.
+plt.scatter(sample['total_rooms'], sample['median_house_value'])
+
+# Display graph.
+plt.show()
+
+
+
+
+
+
+
+
