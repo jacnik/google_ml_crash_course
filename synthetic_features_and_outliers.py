@@ -157,9 +157,21 @@ def train_model(learning_rate, steps, batch_size, input_feature):
 # Syntetic feature
 california_housing_dataframe["rooms_per_person"] = california_housing_dataframe["total_rooms"] / california_housing_dataframe["population"]
 
+# Clip outliers (rooms_per_person > max_rpp)
+max_rpp = 3.5
+california_housing_dataframe["rooms_per_person"] = california_housing_dataframe["rooms_per_person"].apply(lambda val: min(val, max_rpp))
+
 calibration_data = train_model(
     learning_rate=0.1,
-    steps=700,
+    steps=500,
     batch_size=500,
     input_feature="rooms_per_person"
 )
+
+plt.figure(figsize=(15, 6))
+plt.subplot(1, 2, 1)
+plt.scatter(calibration_data["predictions"], calibration_data["targets"])
+plt.subplot(1, 2, 2)
+_ = california_housing_dataframe["rooms_per_person"].hist()
+
+plt.show()
