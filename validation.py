@@ -18,8 +18,8 @@ pd.options.display.float_format = '{:.1f}'.format
 
 california_housing_dataframe = pd.read_csv("./california_housing_train.csv", sep=",")
 
-# california_housing_dataframe = california_housing_dataframe.reindex(
-#     np.random.permutation(california_housing_dataframe.index))
+california_housing_dataframe = california_housing_dataframe.reindex(
+    np.random.permutation(california_housing_dataframe.index))
 
 def preprocess_features(california_housing_dataframe):
     """Prepares input features from California housing data set.
@@ -67,13 +67,13 @@ def preprocess_targets(california_housing_dataframe):
     return output_targets
 
 training_examples = preprocess_features(california_housing_dataframe.head(12000))
-# print(training_examples.describe())
+print(training_examples.describe())
 
 training_targets = preprocess_targets(california_housing_dataframe.head(12000))
 # print(training_targets.describe())
 
 validation_examples = preprocess_features(california_housing_dataframe.tail(5000))
-# print(validation_examples.describe())
+print(validation_examples.describe())
 
 validation_targets = preprocess_targets(california_housing_dataframe.tail(5000))
 # print(validation_targets.describe())
