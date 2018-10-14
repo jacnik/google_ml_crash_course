@@ -192,9 +192,20 @@ def train_model(
     )
 
     # 1. Create input functions.
-    training_input_fn = lambda: my_input_fn(training_examples, training_targets, batch_size=batch_size)
-    predict_training_input_fn = lambda: my_input_fn(training_examples, training_targets, shuffle=False, num_epochs=1)
-    predict_validation_input_fn = lambda: my_input_fn(validation_examples, validation_targets, shuffle=False, num_epochs=1)
+    training_input_fn = lambda: my_input_fn(
+        training_examples,
+        training_targets['median_house_value'],
+        batch_size=batch_size)
+    predict_training_input_fn = lambda: my_input_fn(
+        training_examples,
+        training_targets['median_house_value'],
+        shuffle=False,
+        num_epochs=1)
+    predict_validation_input_fn = lambda: my_input_fn(
+        validation_examples,
+        validation_targets['median_house_value'],
+        shuffle=False,
+        num_epochs=1)
 
     # Train the model, but do so inside a loop so that we can periodically assess
     # loss metrics.
@@ -211,10 +222,14 @@ def train_model(
         )
 
         # 2. Take a break and compute predictions.
-        training_predictions = linear_regressor.predict(input_fn=predict_training_input_fn)
-        training_predictions = np.array([item['predictions'][0] for item in training_predictions])
-        validation_predictions = linear_regressor.predict(input_fn=predict_validation_input_fn)
-        validation_predictions = np.array([item['predictions'][0] for item in validation_predictions])
+        training_predictions = linear_regressor.predict(
+            input_fn=predict_training_input_fn)
+        training_predictions = np.array(
+            [item['predictions'][0] for item in training_predictions])
+        validation_predictions = linear_regressor.predict(
+            input_fn=predict_validation_input_fn)
+        validation_predictions = np.array(
+            [item['predictions'][0] for item in validation_predictions])
 
         # Compute training and validation loss.
         training_root_mean_squared_error = math.sqrt(
