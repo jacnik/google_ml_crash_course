@@ -279,9 +279,73 @@ total_bedrooms_weight = linear_regressor.get_variable_value('linear/linear_model
 total_rooms_weight = linear_regressor.get_variable_value('linear/linear_model/total_rooms/weights')[0]
 bias = linear_regressor.get_variable_value('linear/linear_model/bias_weights')[0]
 
-predictions = training_examples
+
+used_features = [
+    'latitude',
+    'longitude',
+    'housing_median_age',
+    'total_rooms',
+    'total_bedrooms',
+    'population',
+    'households',
+    'median_income',
+    'rooms_per_person']
+
+
+# predicted_weights = [
+#     linear_regressor.get_variable_value('linear/linear_model/%s/weights' % f)[0]
+#     for f in used_features] # 1x9
+
+predicted_weights = pd.DataFrame()
+for f in used_features:
+    predicted_weights[f] = linear_regressor.get_variable_value('linear/linear_model/%s/weights' % f)[0]
+
+predicted_bias = linear_regressor.get_variable_value('linear/linear_model/bias_weights')
+
+sample = california_housing_dataframe.sample(300)
+sample_features = preprocess_features(sample) # 300x9
+sample_targets = sample['median_house_value'].apply(lambda val: val / 1000.0) # 300x1
+
+sample_features_T = sample_features.T # 9x300
+
+
+predictions = predicted_bias + predicted_weights.dot(sample_features_T) # 1x9 . 9x300 = 1x300
+
+import pdb; pdb.set_trace()
+
+
+cmp = bias + (sample[0:1]['longitude'] * longitude_weight ) + (sample[0:1]['latitude'] * latitude_weight) + (sample[0:1]['housing_median_age'] * housing_median_age_weight)+ (sample[0:1]['total_rooms'] * total_rooms_weight) + (sample[0:1]['total_bedrooms'] * total_bedrooms_weight) + (sample[0:1]['population'] * population_weight) + (sample[0:1]['households'] * households_weight) + (sample[0:1]['median_income'] * median_income_weight)
+
+
+root_mean_squared_error = math.sqrt(
+      metrics.mean_squared_error(predictions, sample_targets))
+
+print(predictions)
+
+# sample_features = [sample_features[f] for f in used_features] # 300x9
+
+
+
 # plt.figure(figsize=(15, 8))
 # plt.subplot(1, 2, 1)
 
 # # plt.scatter(linear_regressor["predictions"], linear_regressor["targets"])
 # plt.show()
+
+
+
+
+
+
+
+
+
+# (Pdb) sample[0:2]
+#       Unnamed: 0  longitude  latitude  housing_median_age  total_rooms  total_bedrooms  population  households  median_income  median_house_value
+#16973       16973     -124.2      40.8                39.0       1606.0           330.0       731.0       327.0            1.6             68300.0
+#14391       14391     -122.1      37.9                22.0       4949.0           626.0      1850.0       590.0           10.5            500001.0
+#(Pdb)
+
+# (Pdb) pp predictions[0:2]
+#    16973  14391
+# 0   73.1  212.2
