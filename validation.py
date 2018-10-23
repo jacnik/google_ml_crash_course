@@ -312,15 +312,19 @@ sample_features_T = sample_features.T # 9x300
 predictions = predicted_bias + predicted_weights.dot(sample_features_T) # 1x9 . 9x300 = 1x300
 
 import pdb; pdb.set_trace()
+predicted_targets = pd.DataFrame()
+predicted_targets['median_house_value'] =  predictions.T 
 
+# this variable is used to validate clculation of first value in predictions DataFrame.
+# cmp = bias + (sample[0:1]['longitude'] * longitude_weight ) + (sample[0:1]['latitude'] * latitude_weight) + (sample[0:1]['housing_median_age'] * housing_median_age_weight)+ (sample[0:1]['total_rooms'] * total_rooms_weight) + (sample[0:1]['total_bedrooms'] * total_bedrooms_weight) + (sample[0:1]['population'] * population_weight) + (sample[0:1]['households'] * households_weight) + (sample[0:1]['median_income'] * median_income_weight)
 
-cmp = bias + (sample[0:1]['longitude'] * longitude_weight ) + (sample[0:1]['latitude'] * latitude_weight) + (sample[0:1]['housing_median_age'] * housing_median_age_weight)+ (sample[0:1]['total_rooms'] * total_rooms_weight) + (sample[0:1]['total_bedrooms'] * total_bedrooms_weight) + (sample[0:1]['population'] * population_weight) + (sample[0:1]['households'] * households_weight) + (sample[0:1]['median_income'] * median_income_weight)
 
 
 root_mean_squared_error = math.sqrt(
-      metrics.mean_squared_error(predictions, sample_targets))
+      metrics.mean_squared_error(predictions.T, sample_targets))
 
-print(predictions)
+plot_lat_lon_vs_median_house_value(sample_features, sample_targets, sample_features, predicted_targets)
+
 
 # sample_features = [sample_features[f] for f in used_features] # 300x9
 
@@ -334,18 +338,3 @@ print(predictions)
 
 
 
-
-
-
-
-
-
-# (Pdb) sample[0:2]
-#       Unnamed: 0  longitude  latitude  housing_median_age  total_rooms  total_bedrooms  population  households  median_income  median_house_value
-#16973       16973     -124.2      40.8                39.0       1606.0           330.0       731.0       327.0            1.6             68300.0
-#14391       14391     -122.1      37.9                22.0       4949.0           626.0      1850.0       590.0           10.5            500001.0
-#(Pdb)
-
-# (Pdb) pp predictions[0:2]
-#    16973  14391
-# 0   73.1  212.2
