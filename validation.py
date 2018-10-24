@@ -16,6 +16,8 @@ tf.logging.set_verbosity(tf.logging.ERROR)
 pd.options.display.max_rows = 10
 pd.options.display.float_format = '{:.1f}'.format
 
+#california_housing_dataframe = pd.read_csv("https://dl.google.com/mlcc/mledu-datasets/california_housing_train.csv", sep=",")
+#california_housing_dataframe.to_csv("./california_housing_train.csv", sep=",")
 california_housing_dataframe = pd.read_csv("./california_housing_train.csv", sep=",")
 
 california_housing_dataframe = california_housing_dataframe.reindex(
@@ -325,4 +327,10 @@ print(root_mean_squared_error)
 #import pdb; pdb.set_trace()
 
 plot_lat_lon_vs_median_house_value(sample_features, sample_targets, sample_features, predicted_targets)
+
+
+#california_housing_test_data = pd.read_csv("https://download.mlcc.google.com/mledu-datasets/california_housing_test.csv", sep=",")
+#california_housing_test_data.to_csv("./california_housing_test_data.csv", sep=",")
+california_housing_test_data= pd.read_csv("./california_housing_test_data.csv", sep=",")
+
 
