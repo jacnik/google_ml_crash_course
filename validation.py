@@ -304,16 +304,14 @@ predicted_bias = linear_regressor.get_variable_value('linear/linear_model/bias_w
 
 sample = california_housing_dataframe.sample(300)
 sample_features = preprocess_features(sample) # 300x9
-sample_targets = sample['median_house_value'].apply(lambda val: val / 1000.0) # 300x1
+sample_targets = pd.DataFrame(sample["median_house_value"].apply(lambda v: v / 1000.0)) # 300x1
 
 sample_features_T = sample_features.T # 9x300
 
 
 predictions = predicted_bias + predicted_weights.dot(sample_features_T) # 1x9 . 9x300 = 1x300
 
-import pdb; pdb.set_trace()
-predicted_targets = pd.DataFrame()
-predicted_targets['median_house_value'] =  predictions.T 
+predicted_targets = predictions.T.rename(index=str, columns={0: "median_house_value"})
 
 # this variable is used to validate clculation of first value in predictions DataFrame.
 # cmp = bias + (sample[0:1]['longitude'] * longitude_weight ) + (sample[0:1]['latitude'] * latitude_weight) + (sample[0:1]['housing_median_age'] * housing_median_age_weight)+ (sample[0:1]['total_rooms'] * total_rooms_weight) + (sample[0:1]['total_bedrooms'] * total_bedrooms_weight) + (sample[0:1]['population'] * population_weight) + (sample[0:1]['households'] * households_weight) + (sample[0:1]['median_income'] * median_income_weight)
@@ -323,18 +321,8 @@ predicted_targets['median_house_value'] =  predictions.T
 root_mean_squared_error = math.sqrt(
       metrics.mean_squared_error(predictions.T, sample_targets))
 
+print(root_mean_squared_error)
+#import pdb; pdb.set_trace()
+
 plot_lat_lon_vs_median_house_value(sample_features, sample_targets, sample_features, predicted_targets)
-
-
-# sample_features = [sample_features[f] for f in used_features] # 300x9
-
-
-
-# plt.figure(figsize=(15, 8))
-# plt.subplot(1, 2, 1)
-
-# # plt.scatter(linear_regressor["predictions"], linear_regressor["targets"])
-# plt.show()
-
-
 
