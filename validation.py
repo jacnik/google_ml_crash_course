@@ -294,10 +294,6 @@ used_features = [
     'rooms_per_person']
 
 
-# predicted_weights = [
-#     linear_regressor.get_variable_value('linear/linear_model/%s/weights' % f)[0]
-#     for f in used_features] # 1x9
-
 predicted_weights = pd.DataFrame()
 for f in used_features:
     predicted_weights[f] = linear_regressor.get_variable_value('linear/linear_model/%s/weights' % f)[0]
@@ -324,7 +320,6 @@ root_mean_squared_error = math.sqrt(
       metrics.mean_squared_error(predictions.T, sample_targets))
 
 print(root_mean_squared_error)
-#import pdb; pdb.set_trace()
 
 plot_lat_lon_vs_median_house_value(sample_features, sample_targets, sample_features, predicted_targets)
 
@@ -333,4 +328,18 @@ plot_lat_lon_vs_median_house_value(sample_features, sample_targets, sample_featu
 #california_housing_test_data.to_csv("./california_housing_test_data.csv", sep=",")
 california_housing_test_data= pd.read_csv("./california_housing_test_data.csv", sep=",")
 
+test_features = preprocess_features(california_housing_test_data)
+test_targets = preprocess_targets(california_housing_test_data)
+
+
+
+test_data_predict = linear_regressor.predict(
+    input_fn=lambda: test_features)
+
+
+test_root_mean_squared_error = math.sqrt(
+      metrics.mean_squared_error(test_data_predict, test_targets))
+
+print(test_root_mean_squared_error) 
+#import pdb; pdb.set_trace()
 
