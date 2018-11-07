@@ -319,7 +319,7 @@ predicted_targets = predictions.T.rename(index=str, columns={0: "median_house_va
 root_mean_squared_error = math.sqrt(
       metrics.mean_squared_error(predictions.T, sample_targets))
 
-print(root_mean_squared_error)
+print("RMSE (calculated by pulling weights from regressor: %0.2f (sample data)" % root_mean_squared_error)
 
 plot_lat_lon_vs_median_house_value(sample_features, sample_targets, sample_features, predicted_targets)
 
@@ -331,15 +331,20 @@ california_housing_test_data= pd.read_csv("./california_housing_test_data.csv", 
 test_features = preprocess_features(california_housing_test_data)
 test_targets = preprocess_targets(california_housing_test_data)
 
+predict_test_input_fn = lambda: my_input_fn(
+    test_features,
+    test_targets['median_house_value'],
+    num_epochs=1,
+    shuffle=False)
 
-
-test_data_predict = linear_regressor.predict(
-    input_fn=lambda: test_features)
-
+test_predictions = linear_regressor.predict(input_fn=predict_test_input_fn)
+test_predictions = np.array([item['predictions'][0] for item in test_predictions]) 
 
 test_root_mean_squared_error = math.sqrt(
-      metrics.mean_squared_error(test_data_predict, test_targets))
+    metrics.mean_squared_error(test_predictions, test_targets))
 
-print(test_root_mean_squared_error) 
 #import pdb; pdb.set_trace()
+
+print("Final RMSE (on test data): %0.2f" % test_root_mean_squared_error) 
+
 
